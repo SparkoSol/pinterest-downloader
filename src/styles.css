@@ -1,0 +1,18 @@
+.wrapper {
+    border: 1px solid black;
+    padding: 50px;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.title {
+    font-weight: normal;
+}
+
+.btn {
+    margin-top: 10px;
+}
+
+#url {
+    width: 50%
+}
