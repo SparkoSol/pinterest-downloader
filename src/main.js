@@ -5,7 +5,7 @@ import axios from 'axios'
 import VueAxios from "vue-axios";
 
 // importing styles
-import './styles.css'
+import './assets/styles.css'
 
 Vue.config.productionTip = false
 
