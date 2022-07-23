@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Pinterest Video  Downloader",
+  "description": "Code snippets, used for easily download /pinterest videos!",
+  "version": "1.0",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "/pinterest.png",
+      "32": "/pinterest.png",
+      "48": "/pinterest.png",
+      "128": "/pinterest.png"
+    }
+  },
+  "icons": {
+    "16": "/pinterest.png",
+    "32": "/pinterest.png",
+    "48": "/pinterest.png",
+    "128": "/pinterest.png"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ]
+}
