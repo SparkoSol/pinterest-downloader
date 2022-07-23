@@ -43,6 +43,7 @@ function initialize() {
     cancel_btn.innerText = 'Reset';
 
     let submit_btn = document.createElement('button');
+    submit_btn.id = 'submit_btn';
     submit_btn.className = 'submit-btn btn';
     submit_btn.type = 'button';
     submit_btn.innerHTML = '<span>Generate</span>';
@@ -59,34 +60,52 @@ function initialize() {
     wrapper.appendChild(div1);
 
     cancel_btn.addEventListener('click', function () {
-        if (input.value && input.value !== '') {
-            let ele = document.getElementById('file-details');
-            if (ele) {
-                ele.remove();
-            }
-            input.value = '';
+        document.getElementById('file-details');
+        if (document.getElementById('file-details')) {
+            document.getElementById('file-details').remove();
         }
+        input.value = '';
         submit_btn.disabled = false;
         submit_btn.classList.remove('disable');
+        div3.style.marginTop = '0px';
         if (input.classList.contains('invalid')) {
             input.classList.remove('invalid');
             document.getElementById('error').remove();
         }
+        if (document.getElementById('loader')) {
+            document.getElementById('loader').remove();
+        }
     });
 
     submit_btn.addEventListener('click', async function () {
-        if (input.value === '' && !input.value && !input.classList.contains('invalid')) {
+        let hasError = false;
+        let errorMessage = '';
+
+        if (input.value === '' && !input.value) {
+            hasError = true;
+            errorMessage = 'Video Url is required, please fill it!'
+        } else if (!input.value.includes('/pin')) {
+            hasError = true;
+            errorMessage = 'Please use a valid pinterest video url!'
+        } else if (input.classList.contains('invalid')) {
+            hasError = true;
+            errorMessage = 'Video Url is required, please fill it!'
+        }
+
+        if (hasError) {
             input.classList.add('invalid');
             let error = document.createElement('span');
-            error.innerText = 'Valid Video Url is required !';
+            error.innerText = errorMessage;
             error.id = 'error';
             error.style.color = 'red';
             error.style.marginBottom = '10px';
             div2.appendChild(error);
             submit_btn.disabled = true;
             submit_btn.classList.add('disable');
+            div3.style.marginTop = '10px';
             return;
         }
+
         let spinner = document.createElement('span');
         spinner.id = 'loader';
         spinner.className = 'loader';
@@ -106,95 +125,26 @@ function initialize() {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
             body: JSON.stringify({url: input.value}) // body data type must match "Content-Type" header
         })
-            .then(response => response.json())
-            .then(data => {
-                if (document.getElementById('file-details')) {
-                    document.getElementById('file-details').remove();
+            .then(async response => {
+                if (response.status !== 200) {
+                    let res = await response.json();
+                    let error = document.createElement('span');
+                    error.id = 'error';
+                    error.style.color = 'red';
+                    error.style.marginBottom = '10px';
+                    error.innerText = res.message;
+                    div2.appendChild(error);
+                    submit_btn.disabled = true;
+                    submit_btn.classList.add('disable');
+                    div3.style.marginTop = '10px';
+                    return null;
                 }
-                let div4 = document.createElement('div');
-                div4.className = 'file-preview';
-                div4.id = 'file-details';
-
-                let div5 = document.createElement('div');
-                div5.className = 'mr-4';
-                let image = document.createElement('img');
-                image.src = data.thumbnail;
-                image.className = 'img-thumbnail';
-                image.width = data.width;
-                image.height = data.height;
-                image.alt = 'thumbnail';
-                div5.appendChild(image);
-
-                div4.appendChild(div5)
-
-                let div6 = document.createElement('div');
-                div6.className = 'file-details';
-
-                let sub_title = document.createElement('p');
-                sub_title.className = 'label';
-                sub_title.innerText = data.url.replace(/^.*[\\\/]/, '');
-                div6.appendChild(sub_title);
-
-                let div7 = document.createElement('div');
-                div7.className = 'download-preview';
-
-                let download_btn = document.createElement('button');
-                download_btn.id = 'download_btn';
-                download_btn.type = 'button';
-                download_btn.className = 'download-btn btn';
-                download_btn.innerHTML = '<span id="download-btn-id">Download Now</span>';
-                download_btn.style.display = 'flex';
-                download_btn.style.marginRight = '10px';
-                div7.appendChild(download_btn);
-
-                div6.appendChild(div7);
-                div4.appendChild(div6);
-
-                div1.appendChild(div4);
-                submit_btn.disabled = true;
-
-                download_btn.addEventListener("click", async e => {
-                    e.preventDefault();
-                    document.getElementById('download-btn-id').innerText = "Downloading...";
-                    download_btn.disabled = true;
-                    let download_loader = document.createElement('span');
-                    download_loader.id = 'download_loader';
-                    download_loader.className = 'loader';
-                    download_loader.style.marginLeft = '10px';
-                    download_btn.appendChild(download_loader)
-                    download_btn.disabled = true;
-                    download_btn.classList.add('disable');
-
-                    let _url = 'http://10.20.20.101:3000/dataShake/testing/getVideo?url=' + data.url;
-                    let response = await fetch(_url, {
-                        redirect: "follow", method: 'GET'
-                    })
-                        .then(response => {
-                            return response.blob()
-                        })
-                        .then(file => {
-                            let tempUrl = URL.createObjectURL(file);
-                            const aTag = document.createElement("a");
-                            aTag.href = tempUrl;
-                            aTag.download = _url.replace(/^.*[\\\/]/, '');
-                            // aTag.download = 'Test.mp4'
-                            document.body.appendChild(aTag);
-                            aTag.click();
-                            download_btn.innerText = "Download Now";
-                            URL.revokeObjectURL(tempUrl);
-                            aTag.remove();
-                        })
-                        .catch(e => {
-                            console.log(e)
-                            download_btn.innerText = "Download Now";
-                        }).finally(() => {
-                            download_btn.innerHTML = '<span id="download-btn-id">Download Now</span>';
-                            download_loader.remove();
-                            download_btn.disabled = false;
-                            download_btn.classList.remove('disable');
-                        });
-                });
-
+                return response.json()
+            })
+            .then(data => {
+                if (data) {
+                    generateDownloadContainer(data);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -208,10 +158,99 @@ function initialize() {
     getUrlParams();
 }
 
+function generateDownloadContainer(data) {
+    if (document.getElementById('file-details')) {
+        document.getElementById('file-details').remove();
+    }
+
+    let div4 = document.createElement('div');
+    div4.className = 'file-preview';
+    div4.id = 'file-details';
+
+    let div5 = document.createElement('div');
+    div5.className = 'mr-4';
+    let image = document.createElement('img');
+    image.src = data.thumbnail;
+    image.className = 'img-thumbnail';
+    image.width = data.width;
+    image.height = data.height;
+    image.alt = 'thumbnail';
+    div5.appendChild(image);
+
+    div4.appendChild(div5)
+
+    let div6 = document.createElement('div');
+    div6.className = 'file-details';
+
+    let sub_title = document.createElement('p');
+    sub_title.className = 'label';
+    sub_title.innerText = data.url.replace(/^.*[\\\/]/, '');
+    div6.appendChild(sub_title);
+
+    let div7 = document.createElement('div');
+    div7.className = 'download-preview';
+
+    let download_btn = document.createElement('button');
+    download_btn.id = 'download_btn';
+    download_btn.type = 'button';
+    download_btn.className = 'download-btn btn';
+    download_btn.innerHTML = '<span id="download-btn-id">Download Now</span>';
+    download_btn.style.display = 'flex';
+    download_btn.style.marginRight = '10px';
+    div7.appendChild(download_btn);
+
+    div6.appendChild(div7);
+    div4.appendChild(div6);
+
+    div1.appendChild(div4);
+    submit_btn.disabled = true;
+
+    download_btn.addEventListener("click", async e => {
+        e.preventDefault();
+        document.getElementById('download-btn-id').innerText = "Downloading...";
+        download_btn.disabled = true;
+        let download_loader = document.createElement('span');
+        download_loader.id = 'download_loader';
+        download_loader.className = 'loader';
+        download_loader.style.marginLeft = '10px';
+        download_btn.appendChild(download_loader)
+        download_btn.disabled = true;
+        download_btn.classList.add('disable');
+
+        let _url = 'http://10.20.20.101:3000/dataShake/testing/getVideo?url=' + data.url;
+        let response = await fetch(_url, {
+            redirect: "follow", method: 'GET'
+        })
+            .then(response => {
+                return response.blob()
+            })
+            .then(file => {
+                let tempUrl = URL.createObjectURL(file);
+                const aTag = document.createElement("a");
+                aTag.href = tempUrl;
+                aTag.download = _url.replace(/^.*[\\\/]/, '');
+                document.body.appendChild(aTag);
+                aTag.click();
+                download_btn.innerText = "Download Now";
+                URL.revokeObjectURL(tempUrl);
+                aTag.remove();
+            })
+            .catch(e => {
+                console.log(e)
+                download_btn.innerText = "Download Now";
+            }).finally(() => {
+                download_btn.innerHTML = '<span id="download-btn-id">Download Now</span>';
+                download_loader.remove();
+                download_btn.disabled = false;
+                download_btn.classList.remove('disable');
+            });
+    });
+}
+
 function getUrlParams() {
     let input_field = document.getElementById('url');
     const query = new URLSearchParams(window.location.search)
-    if(query.has('videoUrl')) {
+    if (query.has('videoUrl')) {
         input_field.value = query.get('videoUrl');
     }
 }
@@ -220,6 +259,6 @@ function getUrlParams() {
 function initializeCssStyleSheet() {
     let head = document.getElementsByTagName('head')[0];
     let stylesheet = document.createElement('style');
-    stylesheet.innerText = '.title {\n' + '    color: #CB2027;\n' + '    font-weight: 700!important;\n' + '    margin-bottom: 0.5rem!important;\n' + '    margin-top: 0.5rem!important;\n' + '    font-size: 2.5rem;\n' + '}\n' + '\n' + '.wrapper {\n' + '    width: 100%;\n' + '    padding-right: 15px;\n' + '    padding-left: 15px;\n' + '    margin-right: auto;\n' + '    margin-left: auto;\n' + '    margin-top: 1.5rem!important;\n' + '    margin-bottom: 1.5rem!important;\n' + '}\n' + '\n' + '.label {\n' + '    padding: 0.5rem!important;\n' + '    font-weight: 700!important;\n' + '    text-align: left!important;\n' + '    display: block!important;\n' + '    margin-bottom: 0.5rem;\n' + '}\n' + '\n' + '.form-control {\n' + '    display: block;\n' + '    width: 100%;\n' + '    padding: 0.375rem 0.75rem;\n' + '    font-size: 1rem;\n' + '    line-height: 1.5;\n' + '    color: #495057;\n' + '    background-color: #fff;\n' + '    background-clip: padding-box;\n' + '    border: 1px solid #ced4da;\n' + '    border-radius: 0.25rem;\n' + '    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;\n' + '    margin-bottom: 10px;\n' + '}\n' + '\n' + '.btn-group {\n' + '    display: flex!important;\n' + '    flex-direction: row!important;\n' + '    justify-content: flex-start!important;\n' + '}\n' + '\n' + '.cancel-btn {\n' + '    color: #fff;\n' + '    background-color: #dc3545;\n' + '    border-color: #dc3545;\n' + '    margin-right: 10px;\n' + '}\n' + '\n' + '.submit-btn {\n' + '    color: #fff;\n' + '    background-color: #007bff;\n' + '    border-color: #007bff;\n' + '}\n' + '\n' + '.btn {\n' + '    cursor: pointer;\n' + '    display: inline-block;\n' + '    font-weight: 400;\n' + '    text-align: center;\n' + '    white-space: nowrap;\n' + '    vertical-align: middle;\n' + '    -webkit-user-select: none;\n' + '    -moz-user-select: none;\n' + '    -ms-user-select: none;\n' + '    user-select: none;\n' + '    border: 1px solid transparent;\n' + '    padding: 0.375rem 0.75rem;\n' + '    font-size: 1rem;\n' + '    line-height: 1.5;\n' + '    border-radius: 0.25rem;\n' + '    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;\n' + '}\n' + '\n' + '.file-preview {\n' + '    margin-top: 3rem!important;\n' + '    flex-direction: row!important;\n' + '    display: flex!important;\n' + '}\n' + '\n' + '.mr-4 {\n' + '    margin-right: 1.5rem!important;\n' + '}\n' + '\n' + '.img-thumbnail {\n' + '    padding: 0.25rem;\n' + '    background-color: #fff;\n' + '    border: 1px solid #dee2e6;\n' + '    border-radius: 0.25rem;\n' + '    max-width: 100%;\n' + '    height: auto;\n' + '}\n' + '\n' + '.download-preview {\n' + '    padding: 0.5rem!important;\n' + '    justify-content: space-between!important;\n' + '    display: flex!important;\n' + '}\n' + '\n' + '.download-btn {\n' + '    cursor: pointer;\n' + '    color: #fff;\n' + '    background-color: #17a2b8;\n' + '}\n' + '\n' + '.file-details {\n' + '    width: 100%; border:1px solid #dee2e6; padding: 0 5px\n' + '}\n' + '\n' + '.invalid {\n' + '    border: 2px dashed red;\n' + '}\n' + '\n' + '.disable {\n' + '    opacity: 0.45;\n' + '    cursor: not-allowed;\n' + '}\n' + '\n' + '.loader {\n' + '    border: 4px solid #f3f3f3;\n' + '    border-radius: 50%;\n' + '    border-top: 4px solid #3498db;\n' + '    width: 12px;\n' + '    height: 12px;\n' + '    -webkit-animation: spin 2s linear infinite; /* Safari */\n' + '    animation: spin 2s linear infinite;\n' + '}\n' + '\n' + '@keyframes spin {\n' + '    0% { transform: rotate(0deg); }\n' + '    100% { transform: rotate(360deg); }\n' + '}';
+    stylesheet.innerText = '.title {\n' + '    color: #CB2027;\n' + '    font-weight: 700!important;\n' + '    margin-bottom: 0.5rem!important;\n' + '    margin-top: 0.5rem!important;\n' + '    font-size: 2.5rem;\n' + '}\n' + '\n' + '.wrapper {\n' + '    width: 100%;\n' + '    padding-right: 15px;\n' + '    padding-left: 15px;\n' + '    margin-right: auto;\n' + '    margin-left: auto;\n' + '    margin-top: 1.5rem!important;\n' + '    margin-bottom: 1.5rem!important;\n' + '}\n' + '\n' + '.label {\n' + '    padding: 0.5rem!important;\n' + '    font-weight: 700!important;\n' + '    text-align: left!important;\n' + '    display: block!important;\n' + '    margin-bottom: 0.5rem;\n' + '}\n' + '\n' + '.form-control {\n' + '    display: block;\n' + '    width: 100%;\n' + '    padding: 0.375rem 0.75rem;\n' + '    font-size: 1rem;\n' + '    line-height: 1.5;\n' + '    color: #495057;\n' + '    background-color: #fff;\n' + '    background-clip: padding-box;\n' + '    border: 1px solid #ced4da;\n' + '    border-radius: 0.25rem;\n' + '    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;\n' + '    margin-bottom: 10px;\n' + '}\n' + '\n' + '.btn-group {\n' + '    display: flex!important;\n' + '    flex-direction: row!important;\n' + '    justify-content: flex-start!important;\n' + '}\n' + '\n' + '.cancel-btn {\n' + '    color: #fff;\n' + '    background-color: #dc3545;\n' + '    border-color: #dc3545;\n' + '    margin-right: 10px;\n' + '}\n' + '\n' + '.submit-btn {\n' + '    color: #fff;\n' + '    background-color: #007bff;\n' + '    border-color: #007bff;\n' + '}\n' + '\n' + '.btn {\n' + '    cursor: pointer;\n' + '    display: inline-block;\n' + '    font-weight: 400;\n' + '    text-align: center;\n' + '    white-space: nowrap;\n' + '    vertical-align: middle;\n' + '    -webkit-user-select: none;\n' + '    -moz-user-select: none;\n' + '    -ms-user-select: none;\n' + '    user-select: none;\n' + '    border: 1px solid transparent;\n' + '    padding: 0.375rem 0.75rem;\n' + '    font-size: 1rem;\n' + '    line-height: 1.5;\n' + '    border-radius: 0.25rem;\n' + '    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;\n' + '}\n' + '\n' + '.file-preview {\n' + '    margin-top: 3rem!important;\n' + '    flex-direction: row!important;\n' + '    display: flex!important;\n' + '}\n' + '\n' + '.mr-4 {\n' + '    margin-right: 1.5rem!important;\n' + '}\n' + '\n' + '.img-thumbnail {\n' + '    padding: 0.25rem;\n' + '    background-color: #fff;\n' + '    border: 1px solid #dee2e6;\n' + '    border-radius: 0.25rem;\n' + '    max-width: 100%;\n' + '    height: auto;\n' + '}\n' + '\n' + '.download-preview {\n' + '    padding: 0.5rem!important;\n' + '    justify-content: space-between!important;\n' + '    display: flex!important;\n' + '}\n' + '\n' + '.download-btn {\n' + '    cursor: pointer;\n' + '    color: #fff;\n' + '    background-color: #17a2b8;\n' + '}\n' + '\n' + '.file-details {\n' + '    width: 100%; border:1px solid #dee2e6; padding: 0 5px\n' + '}\n' + '\n' + '.invalid {\n' + '    border: 2px dashed red !important;\n' + '}\n' + '\n' + '.disable {\n' + '    opacity: 0.45;\n' + '    cursor: not-allowed;\n' + '}\n' + '\n' + '.loader {\n' + '    border: 4px solid #f3f3f3;\n' + '    border-radius: 50%;\n' + '    border-top: 4px solid #3498db;\n' + '    width: 12px;\n' + '    height: 12px;\n' + '    -webkit-animation: spin 2s linear infinite; /* Safari */\n' + '    animation: spin 2s linear infinite;\n' + '}\n' + '\n' + '@keyframes spin {\n' + '    0% { transform: rotate(0deg); }\n' + '    100% { transform: rotate(360deg); }\n' + '}';
     head.appendChild(stylesheet);
 }

@@ -1,19 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+    </style>
 </head>
-<body>
-<div class="container py-4" style="width: 420px; height: 100px">
-    <h5 class="text-danger lead"><strong>Pinterest Video Downloader</strong></h5>
+    <body style="width: 320px; background: #e6e6e6">
+<header class="d-flex justify-content-start align-items-center m-2">
+    <img src="/pinterest.png" alt="logo" height="25" width="25"/>
+    <p class="ml-1 mb-0" style="font-size: 14px;font-family: 'Poppins', sans-serif !important; color: #E60023"><b>Pinterest Video Downloader</b></p>
+</header>
+
+<section class="m-2 p-2" style="background: white; border-radius: 4px">
     <div id="showDownload">
-        <section class="d-flex flex-row justify-content-between" >
-            <p>Pinterest Video Found!</p>
-            <a id="download-link" target="_blank" class="btn-primary btn btn-sm">Download Here</a>
-        </section>
+        <span class="">Pinterest Video Found!</span>
+        <a id="download-link" target="_blank" class="d-block btn-success btn btn-sm mt-2">Download Here</a>
     </div>
-    <span id="showNoExistMessage" class="text-warning">No any pinterest video detected !</span>
-</div>
+    <span class="text-danger" id="showNoExistMessage">No pinterest video found!</span>
+</section>
+
+<!--<div class="container py-4" style="width: 200px; height: 100px">-->
+<!--    <div id="showDownload">-->
+<!--        <section class="d-flex flex-row justify-content-between">-->
+<!--            <p>Pinterest Video Found!</p>-->
+<!--            <a id="download-link" target="_blank" class="btn-primary btn btn-sm">Download Here</a>-->
+<!--        </section>-->
+<!--    </div>-->
+<!--</div>-->
+
 <script src="popup.js"></script>
 </body>
 </html>
