@@ -81,6 +81,17 @@ function initialize() {
         let hasError = false;
         let errorMessage = '';
 
+        if (document.getElementById('file-details')) {
+            document.getElementById('file-details').remove();
+        }
+
+        if(document.getElementById('error')) {
+            document.getElementById('error').remove();
+            submit_btn.disabled = false;
+            submit_btn.classList.remove('disable');
+            input.classList.remove('invalid');
+        }
+
         if (input.value === '' && !input.value) {
             hasError = true;
             errorMessage = 'Video Url is required, please fill it!'
@@ -101,11 +112,10 @@ function initialize() {
             error.style.color = 'red';
             error.style.marginBottom = '10px';
             div2.appendChild(error);
-            submit_btn.disabled = true;
-            submit_btn.classList.add('disable');
             div3.style.marginTop = '10px';
             return;
         }
+
 
         let spinner = document.createElement('span');
         spinner.id = 'loader';
@@ -198,11 +208,13 @@ function generateDownloadContainer(data) {
     download_btn.style.marginRight = '10px';
     div7.appendChild(download_btn);
 
+    submit_btn.disabled = false;
+    submit_btn.classList.remove('disable');
+
     div6.appendChild(div7);
     div4.appendChild(div6);
 
     div1.appendChild(div4);
-    submit_btn.disabled = true;
 
     download_btn.addEventListener("click", async e => {
         e.preventDefault();
