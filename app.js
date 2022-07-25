@@ -114,11 +114,8 @@ function initialize() {
         submit_btn.disabled = true;
         submit_btn.classList.add('disable');
 
-        await fetch('http://10.20.20.101:3000/dataShake/testing/url', {
+        await fetch('http://164.92.103.98:3001/pinterest', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
             headers: {
                 'Content-Type': 'application/json'
             }, redirect: 'follow', // manual, *follow, error
@@ -217,7 +214,7 @@ function generateDownloadContainer(data) {
         download_btn.disabled = true;
         download_btn.classList.add('disable');
 
-        let _url = 'http://10.20.20.101:3000/dataShake/testing/getVideo?url=' + data.url;
+        let _url = 'http://164.92.103.98:3001/pinterest/redirects/getVideo?url=' + data.url;
         let response = await fetch(_url, {
             redirect: "follow", method: 'GET'
         })
