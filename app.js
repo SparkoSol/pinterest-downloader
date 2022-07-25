@@ -90,6 +90,7 @@ function initialize() {
         } else if (input.classList.contains('invalid')) {
             hasError = true;
             errorMessage = 'Video Url is required, please fill it!'
+            return;
         }
 
         if (hasError) {
@@ -130,6 +131,7 @@ function initialize() {
                     error.style.color = 'red';
                     error.style.marginBottom = '10px';
                     error.innerText = res.message;
+                    input.classList.add('invalid');
                     div2.appendChild(error);
                     submit_btn.disabled = true;
                     submit_btn.classList.add('disable');
