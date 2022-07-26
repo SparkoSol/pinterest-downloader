@@ -78,6 +78,7 @@
     margin-top: 3rem !important;
     flex-direction: row !important;
     display: flex !important;
+    gap: 15px;
 }
 
 .pinterest-mr-4 {
@@ -133,4 +134,14 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+@media only screen and (max-width: 750px) {
+    .pinterest-file-preview {
+        flex-direction: column !important;
+    }
+    .pinterest-file-details {
+        width: 100% !important;
+        order: -1;
+    }
 }
