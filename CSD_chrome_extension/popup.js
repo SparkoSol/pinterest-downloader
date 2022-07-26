@@ -7,7 +7,7 @@ function getCurrentURl() {
         let showNoExistMessage = document.getElementById('showNoExistMessage');
 
         if(tabs[0].url.includes('https://www.pinterest.com/pin')) {
-            _download_tag.href = "http://localhost:10004/test?videoUrl=" + tabs[0].url;
+            _download_tag.href = "https://sparkolinks.com?videoUrl=" + tabs[0].url;
             showDownload.classList.add('d-block')
             showDownload.classList.remove('d-none')
             showNoExistMessage.classList.add('d-none')

@@ -125,7 +125,7 @@ function initialize() {
         submit_btn.disabled = true;
         submit_btn.classList.add('pinterest-disable');
 
-        await fetch('http://164.92.103.98:3001/pinterest', {
+        await fetch('https://api.sparkolinks.com/pinterest', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             headers: {
                 'Content-Type': 'application/json'
@@ -228,7 +228,7 @@ function generateDownloadContainer(data) {
         download_btn.disabled = true;
         download_btn.classList.add('pinterest-disable');
 
-        let _url = 'http://164.92.103.98:3001/pinterest/redirects/getVideo?url=' + data.url;
+        let _url = 'https://api.sparkolinks.com/pinterest/redirects/getVideo?url=' + data.url;
         let response = await fetch(_url, {
             redirect: "follow", method: 'GET'
         })
