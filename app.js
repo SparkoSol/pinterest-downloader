@@ -46,7 +46,7 @@ function initialize() {
     submit_btn.id = 'submit_btn';
     submit_btn.className = 'pinterest-submit-btn pinterest-btn';
     submit_btn.type = 'button';
-    submit_btn.innerHTML = '<span>Generate</span>';
+    submit_btn.innerHTML = '<span>Download</span>';
     submit_btn.style.display = 'flex';
     submit_btn.style.marginRight = '10px';
 
@@ -123,6 +123,7 @@ function initialize() {
         spinner.style.marginLeft = '10px';
         submit_btn.appendChild(spinner)
         submit_btn.disabled = true;
+        submit_btn.firstChild.innerText = 'Downloading';
         submit_btn.classList.add('pinterest-disable');
 
         await fetch('https://api.sparkolinks.com/pinterest', {
@@ -160,6 +161,7 @@ function initialize() {
             }).finally(() => {
                 spinner.remove();
                 submit_btn.disabled = false;
+                submit_btn.firstChild.innerText = 'Download';
                 submit_btn.classList.remove('pinterest-disable');
             });
     });
@@ -177,7 +179,6 @@ function generateDownloadContainer(data) {
     div4.id = 'file-details';
 
     let div5 = document.createElement('div');
-    div5.className = 'pinterest-mr-4';
     let image = document.createElement('img');
     image.src = data.thumbnail;
     image.className = 'pinterest-img-thumbnail';
@@ -205,7 +206,8 @@ function generateDownloadContainer(data) {
     download_btn.className = 'pinterest-download-btn pinterest-btn';
     download_btn.innerHTML = '<span id="download-btn-id">Download Now</span>';
     download_btn.style.display = 'flex';
-    download_btn.style.marginRight = '10px';
+    download_btn.style.justifyContent = 'center';
+    download_btn.style.alignItems = 'center';
     div7.appendChild(download_btn);
 
     submit_btn.disabled = false;
@@ -218,7 +220,7 @@ function generateDownloadContainer(data) {
 
     download_btn.addEventListener("click", async e => {
         e.preventDefault();
-        document.getElementById('download-btn-id').innerText = "Downloading...";
+        document.getElementById('download-btn-id').innerText = "Downloading";
         download_btn.disabled = true;
         let download_loader = document.createElement('span');
         download_loader.id = 'download_loader';
@@ -268,8 +270,9 @@ function getUrlParams() {
 
 // Css design
 function initializeCssStyleSheet() {
+    console.log('styles')
     let head = document.getElementsByTagName('head')[0];
     let stylesheet = document.createElement('style');
-    stylesheet.innerText = '' + '.pinterest-title {\n' + '    color: #CB2027 !important;\n' + '    font-weight: 700 !important;\n' + '    margin-bottom: 0.5rem !important;\n' + '    margin-top: 0.5rem !important;\n' + '    font-size: 2.5rem !important;\n' + '}\n' + '\n' + '.pinterest-wrapper {\n' + '    width: 100% !important;\n' + '    padding-right: 15px !important;\n' + '    padding-left: 15px !important;\n' + '    margin: 1.5rem auto !important;\n' + '}\n' + '\n' + '.pinterest-label {\n' + '    padding: 0.5rem !important;\n' + '    font-weight: 700 !important;\n' + '    text-align: left !important;\n' + '    display: block !important;\n' + '    margin-bottom: 0.5rem !important;\n' + '}\n' + '\n' + '.pinterest-form-control {\n' + '    display: block !important;\n' + '    width: 100% !important;\n' + '    padding: 0.375rem 0.75rem !important;\n' + '    font-size: 1rem !important;\n' + '    line-height: 1.5 !important;\n' + '    color: #495057 !important;\n' + '    background-color: #fff !important;\n' + '    background-clip: padding-box !important;\n' + '    border: 1px solid #ced4da !important;\n' + '    border-radius: 0.25rem !important;\n' + '    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out !important;\n' + '    margin-bottom: 10px !important;\n' + '}\n' + '\n' + '.pinterest-btn-group {\n' + '    display: flex !important;\n' + '    flex-direction: row !important;\n' + '    justify-content: flex-start !important;\n' + '}\n' + '\n' + '.pinterest-cancel-btn {\n' + '    color: #fff !important;\n' + '    background-color: #dc3545 !important;\n' + '    border-color: #dc3545 !important;\n' + '    margin-right: 10px !important;\n' + '}\n' + '\n' + '.pinterest-submit-btn {\n' + '    color: #fff !important;\n' + '    background-color: #007bff !important;\n' + '    border-color: #007bff !important;\n' + '}\n' + '\n' + '.pinterest-btn {\n' + '    cursor: pointer !important;\n' + '    display: inline-block;\n' + '    font-weight: 400 !important;\n' + '    text-align: center !important;\n' + '    white-space: nowrap !important;\n' + '    vertical-align: middle !important;\n' + '    -webkit-user-select: none !important;\n' + '    -moz-user-select: none !important;\n' + '    -ms-user-select: none !important;\n' + '    user-select: none !important;\n' + '    border: 1px solid transparent !important;\n' + '    padding: 0.375rem 0.75rem !important;\n' + '    font-size: 1rem !important;\n' + '    line-height: 1.5 !important;\n' + '    border-radius: 0.25rem !important;\n' + '    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;\n' + '}\n' + '\n' + '.pinterest-file-preview {\n' + '    margin-top: 3rem !important;\n' + '    flex-direction: row !important;\n' + '    display: flex !important;\n' + '}\n' + '\n' + '.pinterest-mr-4 {\n' + '    margin-right: 1.5rem !important;\n' + '}\n' + '\n' + '.pinterest-img-thumbnail {\n' + '    padding: 0.25rem !important;\n' + '    background-color: #fff !important;\n' + '    border: 1px solid #dee2e6 !important;\n' + '    border-radius: 0.25rem !important;\n' + '    max-width: 100% !important;\n' + '    height: auto !important;\n' + '}\n' + '\n' + '.pinterest-download-preview {\n' + '    padding: 0.5rem !important;\n' + '    justify-content: space-between !important;\n' + '    display: flex !important;\n' + '}\n' + '\n' + '.pinterest-download-btn {\n' + '    cursor: pointer !important;\n' + '    color: #fff !important;\n' + '    background-color: #17a2b8 !important;\n' + '}\n' + '\n' + '.pinterest-file-details {\n' + '    width: 80% !important;\n' + '    border:1px solid #dee2e6 !important;\n' + '    padding: 0 5px !important;\n' + '}\n' + '\n' + '.pinterest-invalid {\n' + '    border: 2px dashed red !important;\n' + '}\n' + '\n' + '.pinterest-disable {\n' + '    opacity: 0.45 !important;\n' + '    cursor: not-allowed !important;\n' + '}\n' + '\n' + '.pinterest-loader {\n' + '    border: 4px solid #f3f3f3 !important;\n' + '    border-radius: 50% !important;\n' + '    border-top: 4px solid #3498db !important;\n' + '    width: 12px !important;\n' + '    height: 12px !important;\n' + '    -webkit-animation: spin 2s linear infinite; /* Safari */\n' + '    animation: spin 2s linear infinite !important;\n' + '}\n' + '\n' + '@keyframes spin {\n' + '    0% { transform: rotate(0deg); }\n' + '    100% { transform: rotate(360deg); }\n' + '}';
+    stylesheet.innerText = "#downloader {\n    min-width: 350px !important;\n    max-width: 800px !important;\n}\n\n#downloader * {\n    /* border: 1px solid green; */\n    padding: 0;\n    margin: 0;\n    box-sizing: border-box;\n}\n\n.pinterest-title {\n    color: #CB2027 !important;\n    font-weight: 700 !important;\n    margin-bottom: 0.5rem !important;\n    margin-top: 0.5rem !important;\n    font-size: 2.5rem !important;\n}\n\n.pinterest-wrapper {\n    width: 100% !important;\n    padding: 0 15px !important;\n    margin: 1.5rem auto !important;\n}\n\n.pinterest-label {\n    padding: 0.5rem !important;\n    font-weight: 700 !important;\n    text-align: left !important;\n    display: block !important;\n    margin-bottom: 0.5rem !important;\n}\n\n.pinterest-form-control {\n    display: block !important;\n    width: calc(100% - 30px) !important;\n    font-size: 1rem !important;\n    line-height: 1.5 !important;\n    color: #495057 !important;\n    background-color: #fff !important;\n    background-clip: padding-box !important;\n    border: 1px solid #ced4da !important;\n    border-radius: 0.25rem !important;\n    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;\n    margin-bottom: 10px !important;\n    width: 100% !important;\n    padding: 12px 20px !important;\n    margin: 8px 0 !important;\n    box-sizing: border-box !important;\n}\n\n.pinterest-btn-group {\n    display: flex !important;\n    justify-content: flex-start !important;\n    gap: 15px !important;\n}\n\n.pinterest-cancel-btn {\n    color: #fff !important;\n    background-color: #dc3545 !important;\n    border-color: #dc3545 !important;\n}\n\n.pinterest-submit-btn {\n    color: #fff !important;\n    background-color: #007bff !important;\n    border-color: #007bff !important;\n}\n\n.pinterest-btn {\n    cursor: pointer !important;\n    display: inline-block;\n    font-weight: 400 !important;\n    text-align: center !important;\n    white-space: nowrap !important;\n    vertical-align: middle !important;\n    -webkit-user-select: none !important;\n    -moz-user-select: none !important;\n    -ms-user-select: none !important;\n    user-select: none !important;\n    border: 1px solid transparent !important;\n    padding: 0.375rem 0.75rem !important;\n    font-size: 1rem !important;\n    line-height: 1.5 !important;\n    border-radius: 0.25rem !important;\n    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;\n}\n\n.pinterest-file-preview {\n    margin-top: 3rem !important;\n    flex-direction: row !important;\n    display: flex !important;\n    gap: 15px;\n    padding: 0 15px !important;\n}\n\n.pinterest-mr-4 {\n    margin-right: 1.5rem !important;\n}\n\n.pinterest-img-thumbnail {\n    padding: 0.25rem !important;\n    background-color: #fff !important;\n    border: 1px solid #dee2e6 !important;\n    border-radius: 0.25rem !important;\n    max-width: 100% !important;\n    height: auto !important;\n}\n\n.pinterest-thumbnail {\n    flex: 2;\n}\n\n.pinterest-download-preview {\n    padding: 0.5rem !important;\n    justify-content: space-between !important;\n    display: flex !important;\n}\n\n.pinterest-download-btn {\n    cursor: pointer !important;\n    color: #fff !important;\n    background-color: #17a2b8 !important;\n}\n\n.pinterest-file-details {\n    border: 1px solid #dee2e6 !important;\n    padding: 0 5px !important;\n    height: fit-content !important;\n}\n\n.pinterest-invalid {\n    border: 2px dashed red !important;\n}\n\n.pinterest-disable {\n    opacity: 0.45 !important;\n    cursor: not-allowed !important;\n}\n\n.pinterest-loader {\n    border: 2px solid #f3f3f3 !important;\n    border-radius: 50% !important;\n    border-top: 2px solid transparent !important;\n    width: 20px !important;\n    height: 20px !important;\n    -webkit-animation: spin 2s linear infinite;\n    animation: spin 1s linear infinite !important;\n}\n\n@keyframes spin {\n    0% {\n        transform: rotate(0deg);\n    }\n\n    100% {\n        transform: rotate(360deg);\n    }\n}\n\n@media only screen and (max-width: 750px) {\n    .pinterest-file-preview {\n        flex-direction: column !important;\n    }\n\n    .pinterest-file-details {\n        width: 100% !important;\n        order: -1;\n    }\n}";
     head.appendChild(stylesheet);
 }
